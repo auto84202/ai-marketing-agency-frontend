@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Auth Debug Tool</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #6366f1;
+            padding-bottom: 10px;
+        }
+        .status {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid #ef4444;
+        }
+        .info {
+            background: #dbeafe;
+            color: #1e40af;
+            border-left: 4px solid #3b82f6;
+        }
+        button {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+        }
+        button:hover {
+            background: #4f46e5;
+        }
+        pre {
+            background: #1f2937;
+            color: #f3f4f6;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Authentication Debug Tool</h1>
+        
+        <div id="status"></div>
+        
+        <h2>LocalStorage Contents:</h2>
+        <div id="storage"></div>
+        
+        <h2>Actions:</h2>
+        <button onclick="checkAuth()">🔄 Refresh Status</button>
+        <button onclick="clearAuth()">🗑️ Clear All Auth Data</button>
+        <button onclick="window.location.href='/auth/login'">🔑 Go to Login</button>
+        <button onclick="testImageAPI()">🧪 Test Image API</button>
+        
+        <h2>Decoded JWT Token:</h2>
+        <div id="tokenInfo"></div>
+    </div>
+
+    <script>
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            const authToken = localStorage.getItem('auth_token');
+            const user = localStorage.getItem('user');
+            
+            let html = '';
+            
+            if (token || authToken) {
+                html += '<div class="status success">✅ Authenticated</div>';
+            } else {
+                html += '<div class="status error">❌ Not Authenticated</div>';
+            }
+            
+            document.getElementById('status').innerHTML = html;
+            
+            // Show storage contents
+            let storageHtml = '<div class="info">';
+            storageHtml += `<p><strong>token:</strong> ${token ? '✅ ' + token.substring(0, 50) + '...' : '❌ Not found'}</p>`;
+            storageHtml += `<p><strong>auth_token:</strong> ${authToken ? '✅ ' + authToken.substring(0, 50) + '...' : '❌ Not found'}</p>`;
+            storageHtml += `<p><strong>user:</strong> ${user ? '✅ Found' : '❌ Not found'}</p>`;
+            
+            if (user) {
+                try {
+                    const userData = JSON.parse(user);
+                    storageHtml += '<pre>' + JSON.stringify(userData, null, 2) + '</pre>';
+                } catch (e) {
+                    storageHtml += '<p class="error">❌ Invalid user JSON</p>';
+                }
+            }
+            
+            storageHtml += '</div>';
+            document.getElementById('storage').innerHTML = storageHtml;
+            
+            // Decode JWT
+            if (token) {
+                try {
+                    const parts = token.split('.');
+                    const payload = JSON.parse(atob(parts[1]));
+                    document.getElementById('tokenInfo').innerHTML = '<pre>' + JSON.stringify(payload, null, 2) + '</pre>';
+                } catch (e) {
+                    document.getElementById('tokenInfo').innerHTML = '<div class="error">❌ Failed to decode token</div>';
+                }
+            } else {
+                document.getElementById('tokenInfo').innerHTML = '<div class="info">No token to decode</div>';
+            }
+        }
+        
+        function clearAuth() {
+            if (confirm('Clear all authentication data?')) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('user');
+                checkAuth();
+                alert('✅ All auth data cleared!');
+            }
+        }
+        
+        async function testImageAPI() {
+            const token = localStorage.getItem('token') || localStorage.getItem('auth_token');
+            
+            if (!token) {
+                alert('❌ No token found! Please login first.');
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:3001/ai/images/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        prompt: 'A test image',
+                        size: '1024x1024',
+                        quality: 'standard',
+                        style: 'vivid',
+                        n: 1
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('✅ API Test Successful!\n\n' + JSON.stringify(data, null, 2));
+                } else {
+                    alert('❌ API Test Failed!\n\nStatus: ' + response.status + '\n\n' + JSON.stringify(data, null, 2));
+                }
+            } catch (error) {
+                alert('❌ Network Error: ' + error.message);
+            }
+        }
+        
+        // Auto-check on load
+        checkAuth();
+    </script>
+</body>
+</html>
+
