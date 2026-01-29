@@ -76,8 +76,8 @@ export default function FacebookPage() {
       }
 
       const url = refresh 
-        ? 'http://localhost:3001/campaigns/facebook-posts?refresh=true'
-        : 'http://localhost:3001/campaigns/facebook-posts'
+        ? `${process.env.NEXT_PUBLIC_API_URL}/campaigns/facebook-posts?refresh=true`
+        : `${process.env.NEXT_PUBLIC_API_URL}/campaigns/facebook-posts`
 
       const response = await fetch(url, {
         headers: { 'Authorization': `Bearer ${token}` }
