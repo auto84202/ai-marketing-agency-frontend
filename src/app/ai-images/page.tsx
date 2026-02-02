@@ -152,7 +152,9 @@ export default function AIImagesPage() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.log('Error response:', errorData);
+        console.error('Error response:', errorData);
+        console.error('Error status:', response.status);
+        console.error('Error statusText:', response.statusText);
         
         if (response.status === 401) {
           // Token might be expired, clear it
@@ -162,15 +164,24 @@ export default function AIImagesPage() {
           setIsAuthenticated(false);
           throw new Error('Session expired. Please login again.');
         }
-        throw new Error(errorData.message || 'Failed to generate image. Please try again.');
+        throw new Error(errorData.message || `Failed to generate image (${response.status}). Please try again.`);
       }
 
       const data = await response.json();
       console.log('Image generation successful:', data);
       console.log('Images array:', data.images);
+      console.log('Number of images:', data.images?.length);
+      
       if (data.images && data.images.length > 0) {
         console.log('First image URL:', data.images[0].url);
+        console.log('Image URL type:', typeof data.images[0].url);
         console.log('Image URL accessible:', data.images[0].url ? 'Yes' : 'No');
+        
+        // Check if using mock images
+        if (data.images[0].url?.includes('picsum.photos')) {
+          console.warn('⚠️ Using mock images from picsum.photos');
+          console.warn('This suggests the OpenAI API call failed. Check backend logs for details.');
+        }
       }
       setResult(data);
     } catch (err) {

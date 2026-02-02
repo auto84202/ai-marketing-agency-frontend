@@ -18,11 +18,23 @@ function AuthCallbackForm() {
         const token = searchParams.get('token')
         const userParam = searchParams.get('user')
         const error = searchParams.get('error')
+        const message = searchParams.get('message')
 
         if (error) {
           setStatus('error')
-          setMessage('OAuth authentication failed. Please try again.')
-          router.replace('/auth/login')
+          if (message) {
+            // Decode the message if it's URL encoded
+            try {
+              setMessage(decodeURIComponent(message))
+            } catch (e) {
+              setMessage('OAuth authentication failed. Please try again.')
+            }
+          } else {
+            setMessage('OAuth authentication failed. Please try again.')
+          }
+          
+          // Don't redirect immediately, let user see error message
+          setTimeout(() => router.replace('/auth/login'), 3000)
           return
         }
 
