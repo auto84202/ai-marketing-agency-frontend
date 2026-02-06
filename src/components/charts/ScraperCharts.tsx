@@ -31,6 +31,8 @@ export function PlatformDistributionChart({ data, title = 'Platform Distribution
             'LINKEDIN': '#0a66c2',
             'REDDIT': '#ff4500',
             'TWITTER': '#00acee',
+            'INSTAGRAM': '#E4405F',
+            'TIKTOK': '#000000',
         };
 
         // Calculate total and percentages

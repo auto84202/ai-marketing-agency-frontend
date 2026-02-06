@@ -153,7 +153,7 @@ export default function JobDetailPage() {
                                 <div>
                                     <div className="flex items-center gap-3 mb-2">
                                         <span className="text-4xl text-blue-600">
-                                            {job.platform === 'FACEBOOK' ? '📘' : job.platform === 'LINKEDIN' ? '💼' : job.platform === 'REDDIT' ? '🤖' : '🐦'}
+                                            {job.platform === 'FACEBOOK' ? '📘' : job.platform === 'LINKEDIN' ? '💼' : job.platform === 'REDDIT' ? '🤖' : job.platform === 'TWITTER' ? '🐦' : job.platform === 'INSTAGRAM' ? '📷' : '📱'}
                                         </span>
                                         <h1 className="text-4xl font-black text-gray-900 tracking-tight">
                                             {job.platform} Analysis
@@ -341,8 +341,8 @@ export default function JobDetailPage() {
 
                                             <div className="flex items-center justify-between">
                                                 <span className={`px-4 py-1.5 text-[11px] font-black rounded-full uppercase tracking-tighter shadow-sm border ${comment.reply?.status === 'SENT'
-                                                        ? 'bg-green-100 text-green-700 border-green-200'
-                                                        : 'bg-red-100 text-red-700 border-red-200'
+                                                    ? 'bg-green-100 text-green-700 border-green-200'
+                                                    : 'bg-red-100 text-red-700 border-red-200'
                                                     }`}>
                                                     {comment.reply?.status === 'SENT' ? 'Autopilot Engaged ✅' : 'Engagement Failed ❌'}
                                                 </span>

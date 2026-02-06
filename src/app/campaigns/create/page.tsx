@@ -87,6 +87,12 @@ export default function CreateCampaignPage() {
         return
       }
 
+      if (!apiUrl) {
+        console.error('NEXT_PUBLIC_API_URL is not set')
+        setError('API URL is not configured. Please set NEXT_PUBLIC_API_URL')
+        return
+      }
+
       // Prepare data
       const campaignData: any = {
         name: formData.name.trim(),
@@ -119,12 +125,24 @@ export default function CreateCampaignPage() {
           localStorage.removeItem('auth_token')
           localStorage.removeItem('token')
           setError('Your session has expired. Please login again.')
-          // Auth disabled - continue
           return
         }
-        
-        const errorData = await response.json().catch(() => null)
-        throw new Error(errorData?.message || 'Failed to create campaign')
+
+        const contentType = response.headers.get('content-type') || ''
+        let errorText = response.statusText || `Status ${response.status}`
+        try {
+          if (contentType.includes('application/json')) {
+            const errorData = await response.json()
+            errorText = errorData?.message || JSON.stringify(errorData)
+          } else {
+            errorText = await response.text()
+          }
+        } catch (e) {
+          // ignore parse errors and keep statusText
+        }
+
+        console.error('Create campaign failed', { status: response.status, body: errorText })
+        throw new Error(`Failed to create campaign (${response.status}): ${errorText}`)
       }
 
       // Success

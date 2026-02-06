@@ -72,8 +72,8 @@ export default function InstagramPage() {
       }
 
       const url = refresh 
-        ? `${process.env.NEXT_PUBLIC_API_URL}/campaigns/instagram-posts?refresh=true`
-        : `${process.env.NEXT_PUBLIC_API_URL}/campaigns/instagram-posts`
+        ? 'http://localhost:3001/campaigns/instagram-posts?refresh=true'
+        : 'http://localhost:3001/campaigns/instagram-posts'
 
       const response = await fetch(url, {
         headers: { 'Authorization': `Bearer ${token}` }

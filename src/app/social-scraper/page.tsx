@@ -37,13 +37,13 @@ export default function SocialScraperPage() {
     const [showCreateModal, setShowCreateModal] = useState(false);
 
     const [newJob, setNewJob] = useState({
-        platform: 'FACEBOOK',
+        platform: 'INSTAGRAM',
         keyword: '',
         googlePages: 2,
         replyLimit: 5,
         groqApiKey: '',
     });
-    const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['FACEBOOK']);
+    const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['INSTAGRAM']);
     const [isMultiPlatform, setIsMultiPlatform] = useState(false);
 
     useEffect(() => {
@@ -111,13 +111,13 @@ export default function SocialScraperPage() {
 
             setShowCreateModal(false);
             setNewJob({
-                platform: 'FACEBOOK',
+                platform: 'INSTAGRAM',
                 keyword: '',
                 googlePages: 2,
                 replyLimit: 5,
                 groqApiKey: '',
             });
-            setSelectedPlatforms(['FACEBOOK']);
+            setSelectedPlatforms(['INSTAGRAM']);
             setIsMultiPlatform(false);
             loadJobs();
             loadStats();
@@ -173,6 +173,8 @@ export default function SocialScraperPage() {
             case 'LINKEDIN': return '💼';
             case 'REDDIT': return '🤖';
             case 'TWITTER': return '🐦';
+            case 'INSTAGRAM': return '📷';
+            case 'TIKTOK': return '🎵';
             default: return '📱';
         }
     };
@@ -413,6 +415,8 @@ export default function SocialScraperPage() {
                                                 { value: 'LINKEDIN', label: 'LinkedIn', icon: '💼', color: 'sky' },
                                                 { value: 'REDDIT', label: 'Reddit', icon: '🤖', color: 'orange' },
                                                 { value: 'TWITTER', label: 'Twitter', icon: '🐦', color: 'cyan' },
+                                                { value: 'INSTAGRAM', label: 'Instagram', icon: '📷', color: 'pink' },
+                                                { value: 'TIKTOK', label: 'TikTok', icon: '🎵', color: 'purple' },
                                             ].map((platform) => (
                                                 <label
                                                     key={platform.value}
@@ -450,10 +454,12 @@ export default function SocialScraperPage() {
                                             className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-gray-900"
                                             required
                                         >
+                                            <option value="INSTAGRAM">📷 Instagram</option>
                                             <option value="FACEBOOK">📘 Facebook</option>
                                             <option value="LINKEDIN">💼 LinkedIn</option>
                                             <option value="REDDIT">🤖 Reddit</option>
                                             <option value="TWITTER">🐦 Twitter</option>
+                                            <option value="TIKTOK">🎵 TikTok</option>
                                         </select>
                                     </div>
                                 )}
@@ -532,7 +538,7 @@ export default function SocialScraperPage() {
                                         onClick={() => {
                                             setShowCreateModal(false);
                                             setIsMultiPlatform(false);
-                                            setSelectedPlatforms(['FACEBOOK']);
+                                            setSelectedPlatforms(['INSTAGRAM']);
                                         }}
                                         className="flex-1 bg-gray-100 text-gray-700 font-bold py-4 rounded-xl hover:bg-gray-200 transition-all"
                                     >
